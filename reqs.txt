@@ -1,11 +1,12 @@
 dreamai
-ray
 modin
 transformers
 pandas
 sentence_transformers
 pypdf
 requests
+"ray[air]"
+fastapi
 fastai
 setfit
 torch

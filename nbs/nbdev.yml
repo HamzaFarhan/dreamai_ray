@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "dreamai_ray"
+  site-url: "https://HamzaFarhan.github.io/dreamai_ray"
+  description: "DreamAI platform leveraging RAY."
+  repo-branch: main
+  repo-url: "https://github.com/HamzaFarhan/dreamai_ray"

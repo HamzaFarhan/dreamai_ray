@@ -1,0 +1,11 @@
+dreamai
+ray
+modin
+transformers
+pandas
+sentence_transformers
+pypdf
+requests
+fastai
+setfit
+torch

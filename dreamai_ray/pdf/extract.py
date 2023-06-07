@@ -8,9 +8,9 @@ __all__ = ['add_other_class', 'print_segments', 'text_to_segments', 'load_segs_m
 from ..imports import *
 from .core import *
 
-
 # %% ../../nbs/02_pdf.extract.ipynb 4
 def add_other_class(classes, other_class="Other"):
+    # Add 'Other' class if not present
     if other_class not in classes:
         classes.append(other_class)
     return classes
@@ -54,7 +54,14 @@ def load_ems_model(model_name="HamzaFarhan/PDFSegs", device="cpu"):
     return SentenceTransformer(model_name, device=device)
 
 
-def write_segments(segs_model, data_path, output_path="pdf_segments", n_lines=3):
+def write_segments(
+    segs_model,
+    data_path,
+    output_path="pdf_segments",
+    n_lines=3,
+    classes=["Work Experience", "Education", "Certifications", "Other"],
+    other_class="Other",
+):
     """
     Extracts text from PDFs and writes segments to JSON files.
 
@@ -68,6 +75,10 @@ def write_segments(segs_model, data_path, output_path="pdf_segments", n_lines=3)
         Folder to write JSON files. Defaults to 'pdf_segments'.
     n_lines : int
         Number of lines to group together when extracting text from PDFs.
+    classes : List[str]
+        List of segment classes. Defaults to ["Work Experience", "Education", "Certifications", "Other"].
+    other_class : str
+        Name of the 'Other' class. Defaults to "Other".
     Returns
     -------
     None
@@ -79,7 +90,9 @@ def write_segments(segs_model, data_path, output_path="pdf_segments", n_lines=3)
     for file in pdfs:
         try:
             pdf_text = text_dict[str(file)]
-            (segments,) = text_to_segments(pdf_text, segs_model, thresh=0.6)[0]
+            (segments,) = text_to_segments(
+                pdf_text, segs_model, thresh=0.6, classes=classes, other_class=other_class
+            )[0]
             fn = (output_path / Path(file).stem).with_suffix(".json")
             with open(fn, "w") as f:
                 json.dump(segments, f, indent=4)
@@ -141,5 +154,3 @@ def write_embeddings(
                     json.dump(em_dict, f)
         except Exception as e:
             msg.fail(f"\nCould not write embeddings for {str(file)}", e)
-            # print(f"\nCould not write embeddings for {str(file)}\n{e}")
-

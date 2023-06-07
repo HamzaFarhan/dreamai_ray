@@ -6,6 +6,7 @@ __all__ = ['load_ner_model', 'load_job_model', 'proc_ner', 'job_ner', 'edu_ner',
 # %% ../../nbs/03_pdf.ner.ipynb 2
 from ..imports import *
 
+
 # %% ../../nbs/03_pdf.ner.ipynb 4
 def load_ner_model(model_name="tner/deberta-v3-large-ontonotes5", device="cpu"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -19,7 +20,9 @@ def load_ner_model(model_name="tner/deberta-v3-large-ontonotes5", device="cpu"):
     )
 
 
-def load_job_model(model_name="ismail-lucifer011/autotrain-job_all-903929564", device="cpu"):
+def load_job_model(
+    model_name="ismail-lucifer011/autotrain-job_all-903929564", device="cpu"
+):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForTokenClassification.from_pretrained(model_name)
     return pipeline(
@@ -48,7 +51,11 @@ def proc_ner(txt, ner, ner_dict={"institute": "", "date": ""}, thresh=3):
         eg = d["entity_group"]
         w = " " + d["word"].strip()
         k = mapper.get(eg, None)
-        if k is not None and ner_dict.get(k, None) is not None and not w.startswith("##"):
+        if (
+            k is not None
+            and ner_dict.get(k, None) is not None
+            and not w.startswith("##")
+        ):
             ner_dict[k] = (ner_dict[k] + w).strip()
     res = {k: v for k, v in ner_dict.items() if len(v) > thresh}
     if res.get(org_key, None) is None:
@@ -76,3 +83,4 @@ def is_valid_jner(ner, thresh=3):
 
 def is_valid_tner(ner, thresh=3):
     return ner.get("institute", None) is not None
+

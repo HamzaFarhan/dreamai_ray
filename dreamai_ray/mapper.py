@@ -11,6 +11,7 @@ from .utils import *
 
 # %% ../nbs/01_mapper.ipynb 4
 class Callback:
+    "Base class for callbacks for `Mapper`."
     def before_batch(self, **kwargs):
         pass
 
@@ -25,6 +26,7 @@ class Callback:
 
 
 class msg_bs_cb(Callback):
+    "A callback to print the batch size."
     def before_batch(self, df, **kwargs):
         msg.info(f"DF BATCH SIZE: {len(df)}", spaced=True)
 

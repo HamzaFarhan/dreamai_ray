@@ -14,6 +14,14 @@ from .df import *
 class SegsMapper(Mapper):
     """
     A custom mapper for PDF segmentation. It uses the `df_segs` function to extract the segments from the PDF.
+    Parameters
+    ----------
+    segs_model : str, optional
+        The name of the model to use for segmentation, by default "HamzaFarhan/PDFSegs"
+    udf : function, optional
+        The function to use for extracting the segments, by default `df_segs`. It should take a df and return a df.
+    udf_kwargs : dict, optional
+        The keyword arguments to pass to the `udf`.
     """
 
     def __init__(
@@ -27,16 +35,6 @@ class SegsMapper(Mapper):
         ),
         **kwargs,
     ):
-        """
-        Parameters
-        ----------
-        segs_model : str, optional
-            The name of the model to use for segmentation, by default "HamzaFarhan/PDFSegs"
-        udf : function, optional
-            The function to use for extracting the segments, by default df_segs
-        udf_kwargs : dict, optional
-            The keyword arguments to pass to the `udf` function.
-        """
         segs_model = load_segs_model(segs_model, device=default_device())
         udf_kwargs["segs_model"] = segs_model
         super().__init__(**locals_to_params(locals()))

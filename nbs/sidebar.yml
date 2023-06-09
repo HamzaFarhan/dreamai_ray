@@ -1,10 +1,10 @@
 website:
   sidebar:
+    style: floating
     contents:
       - index.ipynb
       - 00_utils.ipynb
-      - 01_pdf.core.ipynb
-      - 02_pdf.extract.ipynb
-      - 03_pdf.ner.ipynb
-      - 04_pdf.df.ipynb
-      - 05_pdf.app.ipynb
+      - 01_mapper.ipynb
+    contents:
+      - section: PDF
+        contents: pdf/*

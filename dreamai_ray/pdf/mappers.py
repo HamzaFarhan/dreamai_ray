@@ -10,6 +10,7 @@ from ..mapper import *
 from .extract import *
 from .df import *
 
+
 # %% ../../nbs/pdf/04_mappers.ipynb 4
 class SegsMapper(Mapper):
     """
@@ -30,3 +31,4 @@ class SegsMapper(Mapper):
         segs_model = load_segs_model(segs_model, device=default_device())
         udf_kwargs["segs_model"] = segs_model
         super().__init__(**locals_to_params(locals()))
+

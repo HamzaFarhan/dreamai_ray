@@ -47,7 +47,8 @@ def cbs_after_batch(cbs, **kwargs):
 
 class Mapper:
     """
-    A class to map a function to a dataframe. The function can be a UDF or a function that returns a dataframe.
+    A class to map a function to a dataframe.
+    The function should expect a dataframe as input and return a dataframe as output.
     """
 
     def __init__(

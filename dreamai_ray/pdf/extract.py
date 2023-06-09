@@ -8,7 +8,6 @@ __all__ = ['add_other_class', 'print_segments', 'text_to_segments', 'text_to_ems
 from ..imports import *
 from .core import *
 
-
 # %% ../../nbs/pdf/01_extract.ipynb 4
 def add_other_class(classes, other_class="Other"):
     # Add 'Other' class if not present
@@ -24,7 +23,7 @@ def print_segments(segments: dict, limit: int = 10, width: int = 100):
             print("\t", end="")
             pprint(s, width=width)
             print()
-        print("-" * width + 4)
+        print("-" * (width + 4))
 
 
 def text_to_segments(
@@ -45,6 +44,7 @@ def text_to_segments(
         if txt not in segments[pc]:
             segments[pc].append(txt)
     return segments, pred_classes, probs
+
 
 def text_to_ems(
     df,

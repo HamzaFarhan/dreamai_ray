@@ -5,6 +5,5 @@ website:
       - index.ipynb
       - 00_utils.ipynb
       - 01_mapper.ipynb
-    contents:
       - section: PDF
         contents: pdf/*

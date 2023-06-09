@@ -8,6 +8,7 @@ __all__ = ['Callback', 'msg_bs_cb', 'cbs_before_batch', 'cbs_before_batch_rows',
 from .imports import *
 from .utils import *
 
+
 # %% ../nbs/01_mapper.ipynb 4
 class Callback:
     def before_batch(self, **kwargs):
@@ -47,23 +48,16 @@ def cbs_after_batch(cbs, **kwargs):
 class Mapper:
     """
     A class to map a function to a dataframe. The function can be a UDF or a function that returns a dataframe.
-    Parameters
-    ----------
-    udf: function
-        A function that takes a dataframe as input and returns a dataframe as output.
-    udf_kwargs: dict
-        The keyword arguments to pass to the `udf`.
-    cbs: list
-        A list of `Callback`s to run before and after the mapping.
     """
 
     def __init__(
         self,
-        udf=noop,
-        udf_kwargs={},
-        cbs=[msg_bs_cb()],
+        udf=noop,  # A function that takes a dataframe as input and returns a dataframe as output.
+        udf_kwargs={},  # The keyword arguments to pass to the `udf`.
+        cbs=[],  # A list of `Callback`s to run before and after the mapping. It will add the `msg_bs_cb` by default.
         **kwargs,
     ):
+        cbs = [msg_bs_cb()] + cbs
         udf = partial(udf, **udf_kwargs)
         store_attr(**locals_to_params(locals()))
 

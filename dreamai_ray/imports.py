@@ -4,7 +4,8 @@ from dreamai.core import *
 import requests
 import subprocess
 from torch import nn
-import pandas as pd1
+
+# import pandas as pd
 from pypdf import PdfReader
 from ast import literal_eval
 from setfit import SetFitModel
@@ -20,7 +21,8 @@ from transformers import (
 
 import ray
 from ray import serve
-import modin.pandas as pd
+
+# import modin.pandas as pd
 from ray import data as rd
 from ray.air import Checkpoint
 from ray.train.predictor import Predictor

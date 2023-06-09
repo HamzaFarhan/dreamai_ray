@@ -2,14 +2,13 @@
 
 # %% auto 0
 __all__ = ['json_file', 'get_task_from_kv_store', 'init_task_progress', 'update_task_progress', 'is_bucket', 'gsutil_bucket',
-           'gsutil_folder', 'bucket_move', 'bucket_copy', 'bucket_dl', 'get_local_path', 'lit_eval',
-           'find_alternate_path', 'resolve_ds_path', 'write_ds', 'chain_models', 'is_preprocessor', 'chain_processors',
-           'handle_processors', 'repartition_ds', 'transform_ds', 'group_df_on']
+           'gsutil_src', 'bucket_move', 'bucket_up', 'bucket_dl', 'get_local_path', 'lit_eval', 'find_alternate_path',
+           'resolve_ds_path', 'write_ds', 'chain_models', 'is_preprocessor', 'chain_processors', 'handle_processors',
+           'repartition_ds', 'transform_ds', 'group_df_on']
 
 # %% ../nbs/00_utils.ipynb 2
 from dreamai.core import *
 from .imports import *
-
 
 # %% ../nbs/00_utils.ipynb 4
 def json_file(path, folder):
@@ -66,7 +65,9 @@ def gsutil_bucket(bucket):
     return bucket
 
 
-def gsutil_folder(folder):
+def gsutil_src(folder):
+    if Path(folder).suffix != "":
+        return str(folder)
     folder = str(folder)
     if folder[-1] != "/":
         folder += "/"
@@ -77,29 +78,36 @@ def gsutil_folder(folder):
 def bucket_move(folder, bucket):
     gu = shutil.which("gsutil")
     bucket = gsutil_bucket(bucket)
-    folder = gsutil_folder(folder)
+    folder = gsutil_src(folder)
     subprocess.run([gu, "-m", "mv", folder, bucket])
 
 
-def bucket_copy(folder, bucket, only_new=True):
+def bucket_up(folder, bucket, only_new=True):
     gu = shutil.which("gsutil")
     bucket = gsutil_bucket(bucket)
-    folder = gsutil_folder(folder)
+    folder = gsutil_src(folder)
     cmd = [gu, "-m", "cp", "-r"]
     if only_new:
         cmd.append("-n")
     subprocess.run(cmd + [folder, bucket])
 
 
-def bucket_dl(bucket, folder):
+def bucket_dl(bucket, folder, only_new=True):
     gu = shutil.which("gsutil")
     bucket = gsutil_bucket(bucket)
-    subprocess.run([gu, "-m", "cp", "-r", bucket, str(folder)])
+    bucket = gsutil_src(bucket)
+    os.makedirs(folder, exist_ok=True)
+    cmd = [gu, "-m", "cp", "-r"]
+    if only_new:
+        cmd.append("-n")
+    subprocess.run(cmd + [bucket, folder])
 
 
 def get_local_path(folder, task_folder):
     if is_bucket(folder):
-        return task_folder / Path(folder).name
+        if Path(folder).suffix != "":
+            return Path(task_folder)
+        return Path(task_folder) / Path(folder).name
     else:
         return Path(folder)
 
@@ -131,9 +139,7 @@ def resolve_ds_path(ds_path, append=False, overwrite=False):
     ds_path = Path(ds_path)
     if ds_path.is_dir():
         if append:
-            msg.info(
-                f"{ds_path} already exists. Appending because append=True.", spaced=True
-            )
+            msg.info(f"{ds_path} already exists. Appending because append=True.", spaced=True)
             return ds_path
         elif overwrite:
             msg.info(
@@ -209,4 +215,3 @@ def group_df_on(df, group_on="path", agg_on=["text"]):
         agg_on = [agg_on]
     agg_dict = {k: lambda x: list(x) for k in agg_on}
     return df.groupby(group_on, as_index=False).agg(agg_dict).reset_index(drop=True)
-

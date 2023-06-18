@@ -1,0 +1,12 @@
+dreamai
+faiss
+fastai
+pypdf
+ray
+redis
+Requests
+sentence_transformers
+setfit
+torch
+transformers
+wasabi

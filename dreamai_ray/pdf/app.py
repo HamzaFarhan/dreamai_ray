@@ -7,7 +7,7 @@ __all__ = ['SegsPredictor', 'NERPredictor', 'EmsPredictor', 'pdf_pipeline', 'ner
 # %% ../../nbs/pdf/05_app.ipynb 2
 from ..imports import *
 from ..utils import *
-from .core import *
+from .utils import *
 from .extract import *
 from .ner import *
 from .df import *

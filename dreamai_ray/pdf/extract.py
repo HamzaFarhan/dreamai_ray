@@ -6,7 +6,7 @@ __all__ = ['add_other_class', 'print_segments', 'text_to_segments', 'text_to_ems
 
 # %% ../../nbs/pdf/01_extract.ipynb 2
 from ..imports import *
-from .core import *
+from .utils import *
 
 # %% ../../nbs/pdf/01_extract.ipynb 4
 def add_other_class(classes, other_class="Other"):

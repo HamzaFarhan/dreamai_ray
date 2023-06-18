@@ -7,3 +7,5 @@ website:
       - 01_mapper.ipynb
       - section: PDF
         contents: pdf/*
+      - section: Index
+        contents: index/*

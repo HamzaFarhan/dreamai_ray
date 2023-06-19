@@ -16,7 +16,7 @@ from ..imports import noop
 
 
 class write_index_cb(Callback):
-    "A callback to write the index to disk."
+    "A `Callback` to write the index to disk."
 
     def __init__(self, verbose=False) -> None:
         self.verbose = verbose
@@ -33,7 +33,7 @@ class write_index_cb(Callback):
 
 
 class reset_index_cb(Callback):
-    "A callback to reset the index."
+    "A `Callback` to reset the index."
 
     def __init__(self, verbose=True) -> None:
         self.verbose = verbose
@@ -57,7 +57,7 @@ class CreateIndex(Mapper):
         index_folder="indexes",  # The folder to write the index to.
         ems_col="embedding",  # The column to use to create the index.
         udf=df_to_index,  # The function to use to create the index.
-        cbs=[write_index_cb, reset_index_cb],  # The callbacks to use.
+        cbs=[write_index_cb, reset_index_cb],  # The `Callback`s to use.
         verbose=True,  # Whether to print out information.
         udf_kwargs={},  # Additional kwargs to pass to the udf.
         **kwargs,

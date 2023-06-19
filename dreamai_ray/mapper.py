@@ -57,7 +57,7 @@ class msg_cb(Callback):
 
 
 class block_counter_cb(Callback):
-    "A callback to count the number of blocks."
+    "A `Callback` to count the number of blocks."
 
     def __init__(self, verbose=True):
         self.verbose = verbose
@@ -74,7 +74,7 @@ class block_counter_cb(Callback):
 
 
 class msg_bs_cb(Callback):
-    "A callback to print the batch size."
+    "A `Callback` to print the batch size."
 
     def before_batch(self, df, **kwargs):
         msg.info(f"DF BATCH SIZE: {len(df)}", spaced=True)

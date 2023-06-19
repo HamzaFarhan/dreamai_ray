@@ -9,10 +9,17 @@ from ..utils import *
 from ..mapper import *
 from .utils import *
 
-
 # %% ../../nbs/index/01_df.ipynb 4
-def df_to_index(df, index, ems_col="embedding", verbose=False):
-    ems = np.expand_dims(np.array(df[ems_col]), 0)
+def df_to_index(
+    df,
+    index,
+    ems_col="embedding",  # Column name of embeddings in df.
+    ems_key="embedding",  # Key name of embeddings in JSON file.
+    verbose=False,  # Whether to print out information.
+):
+    "Add the embeddings in df to the index."
+
+    ems = read_ems(df, ems_col=ems_col, ems_key=ems_key)
     if verbose:
         msg.info(f"Ems Shape: {ems.shape}")
     index.add(ems)
@@ -21,13 +28,22 @@ def df_to_index(df, index, ems_col="embedding", verbose=False):
     return df
 
 
-def df_index_search(df, ems_col="embedding", index_col="index", k=1, verbose=False):
+def df_index_search(
+    df,
+    ems_col="embedding",  # Column name of embeddings in df.
+    ems_key="embedding",  # Key name of embeddings in JSON file.
+    index_col="index",  # Column name of index in df.
+    k=1,  # Number of nearest neighbors to return.
+    verbose=False,  # Whether to print out information.
+):
+    "Find the nearest neighbors of the embeddings in df."
+
     if verbose:
         msg.info(f"Index Col: {df[index_col]}")
     index = faiss.read_index(str(df[index_col]))
     if verbose:
         msg.info(f"Index Size: {index.ntotal}")
-    ems = np.expand_dims(np.array(df[ems_col]), 0)
+    ems = read_ems(df, ems_col=ems_col, ems_key=ems_key)
     if verbose:
         msg.info(f"Ems Shape: {ems.shape}")
     d, i = index.search(ems, k)

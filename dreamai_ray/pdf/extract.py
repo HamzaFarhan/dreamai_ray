@@ -94,7 +94,7 @@ def write_segments(
     other_class="Other",
 ):
     """
-    Extracts text from PDFs and writes segments to JSON files.
+    Extracts text from PDFs and writes segments to json files.
 
     Parameters
     ----------
@@ -103,7 +103,7 @@ def write_segments(
     data_path : Union[str, Path, List[Union[str, Path]]]
         Path to PDFs. Can be a single file, a directory, or a list of files/directories.
     output_path : Union[str, Path]
-        Folder to write JSON files. Defaults to 'pdf_segments'.
+        Folder to write json files. Defaults to 'pdf_segments'.
     n_lines : int
         Number of lines to group together when extracting text from PDFs.
     classes : List[str]
@@ -146,7 +146,7 @@ def write_embeddings(
     other_class="Other",
 ):
     """
-    Extracts text from PDFs and writes embeddings to JSON files.
+    Extracts text from PDFs and writes embeddings to json files.
 
     Parameters
     ----------
@@ -157,7 +157,7 @@ def write_embeddings(
     data_path : Union[str, Path, List[Union[str, Path]]]
         Path to PDFs. Can be a single file, a directory, or a list of files/directories.
     output_path : Union[str, Path]
-        Folder to write JSON files. Defaults to 'pdf_ems'.
+        Folder to write json files. Defaults to 'pdf_ems'.
     n_lines : int
         Number of lines to group together when extracting text from PDFs.
     classes : List[str]

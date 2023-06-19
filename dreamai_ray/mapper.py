@@ -7,7 +7,6 @@ __all__ = ['Callback', 'init_cb', 'msg_cb', 'block_counter_cb', 'msg_bs_cb', 'Ca
 from .imports import *
 from .utils import *
 
-
 # %% ../nbs/01_mapper.ipynb 4
 class Callback:
     "Base class for callbacks for `Mapper`."
@@ -41,6 +40,8 @@ def init_cb(cb, **kwargs):
 
 
 class msg_cb(Callback):
+    "A `Callback` to print out the `target` attribute of the `Mapper`."
+
     def __init__(self, target=[""], verbose=False):
         super().__init__(**locals_to_params(locals()))
 

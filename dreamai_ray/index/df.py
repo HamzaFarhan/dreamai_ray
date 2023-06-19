@@ -9,12 +9,13 @@ from ..utils import *
 from ..mapper import *
 from .utils import *
 
+
 # %% ../../nbs/index/01_df.ipynb 4
 def df_to_index(
     df,
     index,
     ems_col="embedding",  # Column name of embeddings in df.
-    ems_key="embedding",  # Key name of embeddings in JSON file.
+    ems_key="embedding",  # Key name of embeddings in json file.
     verbose=False,  # Whether to print out information.
 ):
     "Add the embeddings in df to the index."
@@ -31,7 +32,7 @@ def df_to_index(
 def df_index_search(
     df,
     ems_col="embedding",  # Column name of embeddings in df.
-    ems_key="embedding",  # Key name of embeddings in JSON file.
+    ems_key="embedding",  # Key name of embeddings in json file.
     index_col="index",  # Column name of index in df.
     k=1,  # Number of nearest neighbors to return.
     verbose=False,  # Whether to print out information.
@@ -53,4 +54,3 @@ def df_index_search(
     df["distances"] = d  # .tolist()[0]
     df["ids"] = i  # .tolist()[0]
     return df
-

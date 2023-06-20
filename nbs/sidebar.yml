@@ -9,3 +9,5 @@ website:
         contents: pdf/*
       - section: Index
         contents: index/*
+      - section: API
+        contents: api/*

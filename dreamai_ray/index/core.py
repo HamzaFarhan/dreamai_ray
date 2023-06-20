@@ -10,7 +10,6 @@ from ..mapper import *
 from .utils import *
 from .df import *
 
-
 # %% ../../nbs/index/02_core.ipynb 4
 class write_index_cb(Callback):
     "A `Callback` to write the index to disk."
@@ -72,11 +71,20 @@ def create_indexes(
     verbose=True,  # Whether to print out information.
     udf_verbose=False,  # Whether to print out information in the udf.
     udf_kwargs={},  # Additional kwargs to pass to the udf.
+    task_id=gen_random_string(16),  # The task id to use.
     **kwargs,
 ):
     "Function to create indexes from embeddings."
 
-    m = IndexCreator(**locals_to_params(locals(), omit=["ems_folder", "block_size"]))
+    task_folder = f"/tmp/{task_id}"
+    ems_folder, _ = handle_input_path(ems_folder, local_path=task_folder)
+    index_folder, index_bucket = get_local_path(index_folder, local_path=task_folder)
+
+    m = IndexCreator(
+        **locals_to_params(
+            locals(), omit=["ems_folder", "ems_bucket", "index_bucket", "block_size"]
+        )
+    )
     em_files = sorted(
         get_files(ems_folder, extensions=[".json"]),
         key=lambda x: int(x.stem.split("_")[-1]),
@@ -88,17 +96,32 @@ def create_indexes(
     for i in range(0, len(df), block_size):
         df_block = df.iloc[i : i + block_size]
         m(df_block)
+    bucket_up(index_folder, index_bucket)
+    shutil.rmtree(task_folder)
     return df
 
 
 def search_indexes(
     ems,  # The embedding to search. Can be pre-loaded or a path to a json file.
-    index_folder="indexes",  # The folder containing the indexes.
+    index_folder,  # The remote folder containing the indexes.
+    local_index_folder=None,  # The local folder containing the indexes. Not required if `index_folder` is local.
     k=2,  # The number of nearest neighbors to return.
     verbose=True,  # Whether to print out information.
+    task_id=gen_random_string(16),  # The task id to use.
 ):
     "Function to search an embedding against indexes."
 
+    task_folder = f"/tmp/{task_id}"
+    # if os.path.exists(local_index_folder):
+        # index_folder = local_index_folder
+    # else:
+    index_folder_name = Path(index_folder).name
+    index_folder,_ = handle_input_path(index_folder, local_path=local_index_folder, task_id=task_id)
+    # index_folder = Path(index_folder).parent/index_folder_name
+    bucket_dl(ems, task_folder)
+    ems_file = get_files(task_folder, extensions=[".json"])[0]
+    with open(ems_file) as f:
+        ems = json.load(f)["embedding"]
     indexes = sorted(get_files(index_folder), key=lambda x: int(x.stem.split(".")[0]))
     if not os.path.exists(index_folder) or len(indexes) == 0:
         raise Exception(
@@ -115,4 +138,6 @@ def search_indexes(
     # if verbose:
     # msg.info(f"First row of qdf: {qdf.iloc[0]}")
     res = index_heap(qdf, k=k, verbose=verbose)
+    shutil.rmtree(task_folder)
     return res, qdf
+

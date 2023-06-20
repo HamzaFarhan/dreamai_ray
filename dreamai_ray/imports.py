@@ -1,6 +1,7 @@
 from dreamai.imports import *
 from dreamai.core import *
 
+import uuid
 import faiss
 import requests
 import subprocess

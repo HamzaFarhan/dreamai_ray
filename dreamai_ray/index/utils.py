@@ -8,15 +8,27 @@ from ..imports import *
 from ..utils import *
 from ..mapper import *
 
-
 # %% ../../nbs/index/00_utils.ipynb 4
-def read_ems(df, ems_col="embedding", ems_key="embedding"):
+def read_ems(
+    df,
+    ems_col="embedding",
+    ems_key="embedding",
+    task_folder=None,
+    task_id=gen_random_string(16),
+):
     ems = df[ems_col]
     if path_or_str(ems):
-        with open(df[ems_col], "r") as f:
+        ems_path, _ = handle_input_path(ems, local_path=task_folder, task_id=task_id)
+        if Path(ems_path).is_dir():
+            ems_path = get_files(ems_path, extensions=[".json"])[0]
+        with open(ems_path, "r") as f:
             ems = np.expand_dims(json.load(f)[ems_key], 0)
+        try:
+            shutil.rmtree(ems_path)
+        except:
+            os.remove(ems_path)
     else:
-        ems = np.expand_dims(np.array(df[ems_col]), 0)
+        ems = np.expand_dims(np.array(ems), 0)
     return ems
 
 
@@ -46,7 +58,7 @@ def index_heap(
         if verbose:
             msg.good(f"Added Result: {ds[i]}, {ids[i] + offset}")
     rh.finalize()
-    return {"distances": rh.D, "ids": rh.I}
+    return {"distances": rh.D.tolist(), "ids": rh.I.tolist()}
 
 
 def random_ems(num_ems=100, ems_dim=768, ems_folder="embeddings"):

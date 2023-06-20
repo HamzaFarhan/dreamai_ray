@@ -88,7 +88,9 @@ class msg_bs_cb(Callback):
 
 
 class CallbackHandler(Callback):
-    def __init__(self, cbs=[], verbose=False, default=[block_counter_cb, msg_bs_cb], **kwargs):
+    def __init__(
+        self, cbs=[], verbose=False, default=[block_counter_cb, msg_bs_cb], **kwargs
+    ):
         cb_types = [type(cb).__name__ for cb in cbs]
         default_cbs = [cb for cb in default if cb.__name__ not in cb_types]
         self.cbs = default_cbs + cbs
@@ -148,3 +150,4 @@ class Mapper:
         self.cb_handler.after_batch_rows(cls=self, df=df)
         self.cb_handler.after_batch(cls=self, df=df)
         return df
+

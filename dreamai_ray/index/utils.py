@@ -8,6 +8,7 @@ from ..imports import *
 from ..utils import *
 from ..mapper import *
 
+
 # %% ../../nbs/index/00_utils.ipynb 4
 def read_ems(
     df,
@@ -37,21 +38,24 @@ def create_index(dim=768):
 
 
 def index_heap(
-    df, k=1, dist_col="distances", ids_col="ids", size_col="index_size", verbose=False
+    df,
+    k=1,
+    dist_col="distances",
+    ids_col="ids",
+    size_col="index_size",
+    verbose=False,
+    with_offset=False,
 ):
     rh = faiss.ResultHeap(nq=1, k=k)
 
     ds = df[dist_col].tolist()
-    # if verbose:
-    # msg.info(f"First 10 Distances: {ds[:10]}")
     ids = df[ids_col].tolist()
-    # if verbose:
-    # msg.info(f"First 10 IDs: {ids[:10]}")
     sz = df[size_col].tolist()
-    # if verbose:
-    # msg.info(f"First 10 Index Sizes: {sz[:10]}")
     for i in range(len(ds)):
-        offset = sum(sz[:i])
+        if with_offset:
+            offset = sum(sz[:i])
+        else:
+            offset = 0
         if verbose:
             msg.info(f"Adding Result: {ds[i]}, {ids[i] + offset}")
         rh.add_result(ds[i], ids[i] + offset)

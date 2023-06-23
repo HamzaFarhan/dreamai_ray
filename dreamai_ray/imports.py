@@ -6,6 +6,7 @@ import faiss
 import requests
 import subprocess
 from torch import nn
+from time import time
 from pypdf import PdfReader
 from ast import literal_eval
 from setfit import SetFitModel

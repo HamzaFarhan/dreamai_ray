@@ -24,6 +24,7 @@ def df_to_index(
     if verbose:
         msg.info(f"Ems Shape: {ems.shape}")
     index.add(ems)
+    # index.add_with_ids(ems, df.name)
     if verbose:
         msg.info(f"Index Size: {index.ntotal}")
     return df

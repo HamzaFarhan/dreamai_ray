@@ -7,6 +7,7 @@ __all__ = ['Callback', 'init_cb', 'msg_cb', 'block_counter_cb', 'msg_bs_cb', 'Ca
 from .imports import *
 from .utils import *
 
+
 # %% ../nbs/01_mapper.ipynb 4
 class Callback:
     "Base class for callbacks for `Mapper`."
@@ -69,8 +70,12 @@ class msg_cb(Callback):
 class block_counter_cb(Callback):
     "A `Callback` to count the number of blocks."
 
+    def __init__(self, start=0, verbose=False, **kwargs):
+        super().__init__(verbose, **kwargs)
+        self.start = start
+
     def before_init(self, cls, **kwargs):
-        cls.block_counter = 0
+        cls.block_counter = self.start
         if self.verbose:
             msg.info(f"BLOCK COUNTER: {cls.block_counter}", spaced=True)
 
@@ -88,16 +93,15 @@ class msg_bs_cb(Callback):
 
 
 class CallbackHandler(Callback):
-    def __init__(
-        self, cbs=[], verbose=False, default=[block_counter_cb, msg_bs_cb], **kwargs
-    ):
-        cb_types = [type(cb).__name__ for cb in cbs]
-        default_cbs = [cb for cb in default if cb.__name__ not in cb_types]
+    def __init__(self, cbs=[], verbose=False, default=[block_counter_cb, msg_bs_cb], **kwargs):
+        super().__init__(**locals_to_params(locals()))
+        cbs = self.init_cbs(cbs=cbs, **kwargs)
+        cb_names = [type(cb).__name__ for cb in cbs]
+        default_cbs = [cb() for cb in default if cb.__name__ not in cb_names]
         self.cbs = default_cbs + cbs
-        self.init_cbs(verbose=verbose, **kwargs)
 
-    def init_cbs(self, **kwargs):
-        self.cbs = [init_cb(cb, **kwargs) for cb in self.cbs]
+    def init_cbs(self, cbs, **kwargs):
+        return [init_cb(cb, **kwargs) for cb in cbs]
 
     def before_init(self, **kwargs):
         [cb.before_init(**kwargs) for cb in self.cbs]
@@ -133,6 +137,7 @@ class Mapper:
         **kwargs,
     ):
         self.cb_handler = CallbackHandler(cbs=cbs, verbose=verbose, **kwargs)
+        # msg.info(f'Handler CBS: {self.cb_handler.cbs}', spaced=True)
         self.cb_handler.before_init(cls=self, **kwargs)
         udf = partial(udf, **udf_kwargs)
         store_attr(**locals_to_params(locals()))
@@ -150,4 +155,3 @@ class Mapper:
         self.cb_handler.after_batch_rows(cls=self, df=df)
         self.cb_handler.after_batch(cls=self, df=df)
         return df
-

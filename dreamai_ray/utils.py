@@ -2,9 +2,9 @@
 
 # %% auto 0
 __all__ = ['gen_random_string', 'json_file', 'get_task_from_kv_store', 'init_task_progress', 'update_task_progress', 'is_bucket',
-           'gsutil_bucket', 'gsutil_src', 'bucket_move', 'bucket_up', 'bucket_dl', 'get_local_path',
-           'handle_input_path', 'lit_eval', 'find_alternate_path', 'resolve_ds_path', 'write_ds', 'chain_models',
-           'is_preprocessor', 'chain_processors', 'handle_processors', 'repartition_ds', 'transform_ds', 'group_df_on']
+           'gsutil_bucket', 'gsutil_src', 'bucket_count', 'bucket_move', 'bucket_up', 'bucket_dl', 'get_local_path',
+           'handle_input_path', 'lit_eval', 'find_alternate_path', 'resolve_ds_path', 'write_ds', 'repartition_ds',
+           'group_df_on']
 
 # %% ../nbs/00_utils.ipynb 2
 from dreamai.core import *
@@ -81,6 +81,15 @@ def gsutil_src(folder):
     return folder
 
 
+def bucket_count(bucket):
+    gu = shutil.which("gsutil")
+    bucket = gsutil_src(bucket)
+    cmd = [gu, "ls", "-l", bucket]
+    res = subprocess.run(cmd, stdout=subprocess.PIPE)
+    res = res.stdout.decode("utf-8").split("\n")
+    return len(res) - 2
+
+
 def bucket_move(folder, bucket):
     msg.info(f"Moving {folder} to {bucket}.", spaced=True)
     gu = shutil.which("gsutil")
@@ -129,7 +138,9 @@ def get_local_path(remote_path, local_path):
         return Path(remote_path), remote_path
 
 
-def handle_input_path(path, local_path=None, task_id=gen_random_string(16)):
+def handle_input_path(
+    path, local_path=None, task_id=gen_random_string(16), only_new=True
+):
     path = str(path)
     if not is_bucket(path):
         return path, path
@@ -137,7 +148,7 @@ def handle_input_path(path, local_path=None, task_id=gen_random_string(16)):
         local_path = Path(f"/tmp/{task_id}")
     os.makedirs(local_path, exist_ok=True)
     local_path, bucket = get_local_path(path, local_path)
-    bucket_dl(bucket, local_path)
+    bucket_dl(bucket, local_path, only_new=only_new)
     return local_path, bucket
 
 
@@ -168,7 +179,9 @@ def resolve_ds_path(ds_path, append=False, overwrite=False):
     ds_path = Path(ds_path)
     if ds_path.is_dir():
         if append:
-            msg.info(f"{ds_path} already exists. Appending because append=True.", spaced=True)
+            msg.info(
+                f"{ds_path} already exists. Appending because append=True.", spaced=True
+            )
             return ds_path
         elif overwrite:
             msg.info(
@@ -187,39 +200,6 @@ def write_ds(ds, ds_path, append=False, overwrite=False, **kwargs):
     return ds_path
 
 
-def chain_models(models):
-    if not is_list(models):
-        models = [models]
-    return nn.Sequential(*models)
-
-
-def is_preprocessor(x):
-    return isinstance(x, rd.Preprocessor)
-
-
-def chain_processors(processors):
-    if not is_list(processors):
-        processors = [processors]
-    return Chain(*processors)
-
-
-def handle_processors(processors, batch_size=None):
-    if processors is None:
-        return None
-    if not is_list(processors):
-        processors = [processors]
-    if len(processors) == 0:
-        return None
-
-    def to_bm(p, bs):
-        if not is_preprocessor(p) and callable(p):
-            return BatchMapper(p, batch_size=bs, batch_format="pandas")
-        elif is_preprocessor(p):
-            return p
-
-    return chain_processors([to_bm(p, batch_size) for p in processors if p is not None])
-
-
 def repartition_ds(ds, num_blocks=2):
     if path_or_str(ds):
         ds = rd.read_parquet(ds)
@@ -231,16 +211,9 @@ def repartition_ds(ds, num_blocks=2):
     return ds
 
 
-def transform_ds(ds, processors=[], num_blocks=2, batch_size=32, **kwargs):
-    ds = repartition_ds(ds, num_blocks=num_blocks)
-    pp = handle_processors(processors, batch_size=batch_size)
-    if pp is None:
-        return ds
-    return pp.transform(ds)
-
-
 def group_df_on(df, group_on="path", agg_on=["text"]):
     if not is_list(agg_on):
         agg_on = [agg_on]
     agg_dict = {k: lambda x: list(x) for k in agg_on}
     return df.groupby(group_on, as_index=False).agg(agg_dict).reset_index(drop=True)
+

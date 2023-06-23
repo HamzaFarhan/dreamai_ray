@@ -18,11 +18,14 @@ class write_index_cb(Callback):
         cls.index = cls.udf_kwargs["index"]
         index_folder = cls.index_folder
         os.makedirs(index_folder, exist_ok=True)
-        index_path = str(Path(index_folder) / f"{cls.block_counter}.faiss")
+        index_path = str(Path(index_folder) / f"{cls.block_counter}_{cls.index.ntotal}.faiss")
+        df_path = str(Path(index_folder) / f"{cls.block_counter}.csv")
         if self.verbose and cls.verbose:
             msg.info(f"Writing Index to {index_path}")
             msg.info(f"Index Size: {cls.index.ntotal}")
+            msg.info(f"Writing DF to {df_path}")
         faiss.write_index(cls.index, index_path)
+        kwargs["df"].to_csv(df_path, index=False)
 
 
 class reset_index_cb(Callback):
@@ -41,6 +44,7 @@ class IndexCreator(Mapper):
 
     def __init__(
         self,
+        index=None,
         index_dim=3,  # The dimension of the index.
         index_folder="indexes",  # The folder to write the index to.
         ems_col="embedding",  # The column to use to create the index.
@@ -52,7 +56,10 @@ class IndexCreator(Mapper):
         **kwargs,
     ):
         self.index_folder = index_folder
-        self.index = create_index(index_dim)
+        if index is None:
+            self.index = create_index(index_dim)
+        else:
+            self.index = index
         udf_kwargs["index"] = self.index
         udf_kwargs["ems_col"] = ems_col
         udf_kwargs["verbose"] = udf_verbose
@@ -63,7 +70,7 @@ class IndexCreator(Mapper):
 def create_indexes(
     ems_folder="embeddings",  # The folder containing the embeddings.
     ems_col="embedding",  # The column to use to create the index.
-    block_size=25,  # The number of embeddings per index.
+    block_size=40000,  # The number of embeddings per index. if None, all embeddings will be used.
     index_dim=768,  # The dimension of the index.
     index_folder="indexes",  # The folder to write the index to.
     udf=df_to_index,  # The function to use to create the index.
@@ -77,26 +84,39 @@ def create_indexes(
     "Function to create indexes from embeddings."
 
     task_folder = f"/tmp/{task_id}"
+    t1 = time()
     ems_folder, _ = handle_input_path(ems_folder, local_path=task_folder)
+    t2 = time()
+    if verbose:
+        msg.info(f"Time taken to download embeddings: {t2-t1:.2f} seconds.", spaced=True)
+    # index_folder, index_bucket = get_local_path(index_folder, local_path=local_index_folder)
     index_folder, index_bucket = get_local_path(index_folder, local_path=task_folder)
-
+    bucket_indexes = max(bucket_count(index_bucket), 0) // 2
+    if verbose:
+        msg.info(f"Bucket Indexes: {bucket_indexes}")
+    cbs = [block_counter_cb(bucket_indexes)] + cbs
     m = IndexCreator(
         **locals_to_params(
-            locals(), omit=["ems_folder", "ems_bucket", "index_bucket", "block_size"]
-        )
+            locals(),
+            omit=["ems_folder", "ems_bucket", "index_bucket", "block_size"],
+        ),
     )
     em_files = sorted(
-        get_files(ems_folder, extensions=[".json"]),
-        key=lambda x: int(x.stem.split("_")[-1]),
+        get_files(ems_folder, extensions=[".json"], make_str=True),
+        key=lambda x: int(Path(x).stem.split("_")[-1]),
     )
     # ems = [json.load(open(em_file))["embedding"] for em_file in em_files]
     df = pd.DataFrame({ems_col: em_files})
     if verbose:
         msg.info(f"Embeddings DF created of length: {len(df)}")
+    if block_size is None:
+        block_size = len(df)
     for i in range(0, len(df), block_size):
         df_block = df.iloc[i : i + block_size]
-        m(df_block)
-    bucket_up(index_folder, index_bucket)
+        df_block = m(df_block).reset_index(drop=True)
+        # df_path = str(Path(index_folder) / f"{m.block_counter}.csv")
+        # df_block.to_csv(df_path, index=False)
+    bucket_up(index_folder, index_bucket, only_new=False)
     shutil.rmtree(task_folder)
     return df
 
@@ -104,7 +124,7 @@ def create_indexes(
 def search_indexes(
     ems,  # The embedding to search. Can be pre-loaded or a path to a json file.
     index_folder,  # The remote folder containing the indexes.
-    local_index_folder=None,  # The local folder containing the indexes. Not required if `index_folder` is local.
+    local_index_folder="/media/hamza/data2/faiss_data/saved_indexes",  # The local folder containing the indexes. Not required if `index_folder` is local.
     k=2,  # The number of nearest neighbors to return.
     verbose=True,  # Whether to print out information.
     task_id=gen_random_string(16),  # The task id to use.
@@ -113,16 +133,31 @@ def search_indexes(
 
     task_folder = f"/tmp/{task_id}"
     # if os.path.exists(local_index_folder):
-        # index_folder = local_index_folder
+    # index_folder = local_index_folder
     # else:
-    index_folder_name = Path(index_folder).name
-    index_folder,_ = handle_input_path(index_folder, local_path=local_index_folder, task_id=task_id)
-    # index_folder = Path(index_folder).parent/index_folder_name
+    if local_index_folder is None:
+        index_folder, _ = handle_input_path(
+            index_folder, local_path=local_index_folder, task_id=task_id
+        )
+    else:
+        pre_index_folder, _ = get_local_path(index_folder, local_path=local_index_folder)
+        if os.path.exists(pre_index_folder):
+            if verbose:
+                msg.info(f"Cached Index Folder: {pre_index_folder}", spaced=True)
+            index_folder = pre_index_folder
+        else:
+            index_folder, _ = handle_input_path(
+                index_folder, local_path=local_index_folder, task_id=task_id
+            )
+        
     bucket_dl(ems, task_folder)
     ems_file = get_files(task_folder, extensions=[".json"])[0]
     with open(ems_file) as f:
         ems = json.load(f)["embedding"]
-    indexes = sorted(get_files(index_folder), key=lambda x: int(x.stem.split(".")[0]))
+    indexes = sorted(
+        get_files(index_folder, extensions=[".faiss"]),
+        key=lambda x: int(x.stem.split("_")[0]),
+    )
     if not os.path.exists(index_folder) or len(indexes) == 0:
         raise Exception(
             f"No indexes found in '{index_folder}' folder. Please create indexes first."
@@ -135,9 +170,10 @@ def search_indexes(
     )
 
     qdf = qdf.apply(lambda x: df_index_search(x, k=k, verbose=verbose), axis=1)
-    # if verbose:
-    # msg.info(f"First row of qdf: {qdf.iloc[0]}")
-    res = index_heap(qdf, k=k, verbose=verbose)
+    res = index_heap(qdf, k=k, verbose=verbose, with_offset=True)
+    dfs = sorted(get_files(index_folder, extensions=[".csv"]), key=lambda x: int(x.stem))
+    print(dfs)
+    df = pd.concat([pd.read_csv(df) for df in dfs]).reset_index(drop=True)
+    res["meta_data"] = df.iloc[res["ids"][0]].to_dict(orient="records")
     shutil.rmtree(task_folder)
     return res, qdf
-

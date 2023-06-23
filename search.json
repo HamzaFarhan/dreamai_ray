@@ -1,0 +1,128 @@
+[
+  {
+    "objectID": "api/app.html",
+    "href": "api/app.html",
+    "title": "App",
+    "section": "",
+    "text": "source\n\nmatch_ems\n\n match_ems (match_data:__main__.MatchData)\n\n\nsource\n\n\ncreate\n\n create (index_data:__main__.IndexData)\n\n\nsource\n\n\nread_root\n\n read_root ()\n\n\nsource\n\n\nMatchData\n\n MatchData (ems:__main__.ConstrainedStrValue,\n            index_folder:__main__.ConstrainedStrValue, k:int=2)\n\nCreate a new model by parsing and validating input data from keyword arguments.\nRaises ValidationError if the input data cannot be parsed to form a valid model.\n\nsource\n\n\nIndexData\n\n IndexData (ems_folder:__main__.ConstrainedStrValue,\n            index_folder:__main__.ConstrainedStrValue)\n\nCreate a new model by parsing and validating input data from keyword arguments.\nRaises ValidationError if the input data cannot be parsed to form a valid model."
+  },
+  {
+    "objectID": "pdf/df.html",
+    "href": "pdf/df.html",
+    "title": "DF Processors",
+    "section": "",
+    "text": "source\n\nwrite_df_ems\n\n write_df_ems (df, ems_model, classes=['Work Experience', 'Education',\n               'Certifications', 'Other'], other_class='Other')\n\n\nsource\n\n\nwrite_df_segs\n\n write_df_segs (df, segs_model, thresh=0.6, write=False, classes=['Work\n                Experience', 'Education', 'Certifications', 'Other'],\n                other_class='Other')\n\n\nsource\n\n\ndf_segs\n\n df_segs (df, segs_model, thresh=0.6, classes=['Work Experience',\n          'Education', 'Certifications', 'Other'], other_class='Other',\n          write=False)\n\n\nsource\n\n\nwrite_df_ner\n\n write_df_ner (df, tner, jner, work_ner_dict={'company': '', 'date': ''})"
+  },
+  {
+    "objectID": "pdf/extract.html",
+    "href": "pdf/extract.html",
+    "title": "Extract",
+    "section": "",
+    "text": "source\n\nwrite_embeddings\n\n write_embeddings (segs_model, ems_model, data_path,\n                   output_path='pdf_ems', n_lines=3, classes=['Work\n                   Experience', 'Education', 'Certifications', 'Other'],\n                   other_class='Other')\n\nExtracts text from PDFs and writes embeddings to json files.\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nsegs_model\nSetFitModel\n\nSetFit model for segment classification.\n\n\nems_model\nSentenceTransformer\n\nSentenceTransformer model for embedding generation.\n\n\ndata_path\nUnion[str, Path, List[Union[str, Path]]]\n\nPath to PDFs. Can be a single file, a directory, or a list of files/directories.\n\n\noutput_path\nstr\npdf_ems\nFolder to write json files. Defaults to ‘pdf_ems’.\n\n\nn_lines\nint\n3\nNumber of lines to group together when extracting text from PDFs.\n\n\nclasses\nlist\n[‘Work Experience’, ‘Education’, ‘Certifications’, ‘Other’]\nList of segment classes. Defaults to [“Work Experience”, “Education”, “Certifications”, “Other”].\n\n\nother_class\nstr\nOther\nName of the ‘Other’ class. Defaults to “Other”.\n\n\n\n\nsource\n\n\nwrite_segments\n\n write_segments (segs_model, data_path, output_path='pdf_segments',\n                 n_lines=3, classes=['Work Experience', 'Education',\n                 'Certifications', 'Other'], other_class='Other')\n\nExtracts text from PDFs and writes segments to json files.\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nsegs_model\nSetFitModel\n\nSetFit model for segment classification.\n\n\ndata_path\nUnion[str, Path, List[Union[str, Path]]]\n\nPath to PDFs. Can be a single file, a directory, or a list of files/directories.\n\n\noutput_path\nstr\npdf_segments\nFolder to write json files. Defaults to ‘pdf_segments’.\n\n\nn_lines\nint\n3\nNumber of lines to group together when extracting text from PDFs.\n\n\nclasses\nlist\n[‘Work Experience’, ‘Education’, ‘Certifications’, ‘Other’]\nList of segment classes. Defaults to [“Work Experience”, “Education”, “Certifications”, “Other”].\n\n\nother_class\nstr\nOther\nName of the ‘Other’ class. Defaults to “Other”.\n\n\n\n\nsource\n\n\nload_ems_model\n\n load_ems_model (model_name='HamzaFarhan/PDFSegs', device='cpu')\n\n\nsource\n\n\nload_segs_model\n\n load_segs_model (model_name='HamzaFarhan/PDFSegs', device='cpu')\n\n\nsource\n\n\ntext_to_ems\n\n text_to_ems (df, ems_model, classes=['Work Experience', 'Education',\n              'Certifications', 'Other'], other_class='Other')\n\n\nsource\n\n\ntext_to_segments\n\n text_to_segments (text, segs_model, thresh=0.6, classes=['Work\n                   Experience', 'Education', 'Certifications', 'Other'],\n                   other_class='Other')\n\n\nsource\n\n\nprint_segments\n\n print_segments (segments:dict, limit:int=10, width:int=100)\n\n\nsource\n\n\nadd_other_class\n\n add_other_class (classes, other_class='Other')"
+  },
+  {
+    "objectID": "pdf/mappers.html",
+    "href": "pdf/mappers.html",
+    "title": "Mappers",
+    "section": "",
+    "text": "source"
+  },
+  {
+    "objectID": "pdf/mappers.html#usage-example",
+    "href": "pdf/mappers.html#usage-example",
+    "title": "Mappers",
+    "section": "Usage Example",
+    "text": "Usage Example\n\ndf = pd.DataFrame(\n    {\n        \"text\": [\n            [\n                \"I worked at Google\",\n                \"I studied at Harvard\",\n                \"I a have a google cloud certification\",\n            ],\n            [\n                \"I worked at Facebook\",\n                \"I studied at MIT\",\n                \"I have a salesforce certification\",\n            ],\n        ]\n    }\n)\n\nm = SegsMapper()\ndf = m(df)\ndf\n\n\nℹ DF BATCH SIZE: 2\n\n\n\n\n\n\n\n\n\n\ntext\nsegs\npreds\nprobs\n\n\n\n\n0\n[I worked at Google, I studied at Harvard, I a have a google cloud certification]\n{'Work Experience': ['I worked at Google'], 'Education': ['I studied at Harvard'], 'Certifications': ['I a have a google cloud certification'], 'Other': []}\n[Work Experience, Education, Certifications]\n[0.98256487, 0.98468, 0.9786084]\n\n\n1\n[I worked at Facebook, I studied at MIT, I have a salesforce certification]\n{'Work Experience': ['I worked at Facebook'], 'Education': ['I studied at MIT'], 'Certifications': [' I have a salesforce certification'], 'Other': []}\n[Work Experience, Education, Certifications]\n[0.9836285, 0.98444146, 0.9522135]\n\n\n\n\n\n\n\n\nprint_segments(df[\"segs\"][0])\n\nWork Experience: 1\n    'I worked at Google'\n\n--------------------------------------------------------------------------------------------------------\nEducation: 1\n    'I studied at Harvard'\n\n--------------------------------------------------------------------------------------------------------\nCertifications: 1\n    'I a have a google cloud certification'\n\n--------------------------------------------------------------------------------------------------------\nOther: 0\n--------------------------------------------------------------------------------------------------------"
+  },
+  {
+    "objectID": "pdf/app.html",
+    "href": "pdf/app.html",
+    "title": "App",
+    "section": "",
+    "text": "source\n\nner_pipeline_params\n\n ner_pipeline_params (data_path='', segs_folder='pdf_segs', num_gpus=1,\n                      num_blocks=None, ner_batch_size=8, ner_workers=[[3,\n                      4]], redis_host='127.0.0.1', redis_port=6379,\n                      **kwargs)\n\n\nsource\n\n\npdf_pipeline_params\n\n pdf_pipeline_params (data_path='', segs_folder='pdf_segs',\n                      ems_folder='pdf_ems',\n                      segs_model='HamzaFarhan/PDFSegs',\n                      ems_model='HamzaFarhan/PDFSegs', num_gpus=1,\n                      num_blocks=None, batch_sizes=[8, 8, 8], workers=[[3,\n                      4], [3, 4], [3, 4]], do_segs=True, do_ner=False,\n                      redis_host='127.0.0.1', redis_port=6379, **kwargs)\n\n\nsource\n\n\nner_pipeline\n\n ner_pipeline (params)\n\n\nsource\n\n\npdf_pipeline\n\n pdf_pipeline (params)\n\n\nsource\n\n\nEmsPredictor\n\n EmsPredictor (model_name='HamzaFarhan/PDFSegs', device='cpu',\n               task_id=None, redis_host='127.0.0.1', redis_port=6379,\n               **kwargs)\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nNERPredictor\n\n NERPredictor (ner_roles=True, device=None, task_id=None,\n               redis_host='127.0.0.1', redis_port=6379)\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nSegsPredictor\n\n SegsPredictor (model_name='HamzaFarhan/PDFSegs', thresh=0.6, write=False,\n                device=None, **kwargs)\n\nInitialize self. See help(type(self)) for accurate signature."
+  },
+  {
+    "objectID": "pdf/utils.html",
+    "href": "pdf/utils.html",
+    "title": "Utils",
+    "section": "",
+    "text": "source\n\nextract_text_dict\n\n extract_text_dict (data_path, n_lines=3)\n\n\nsource\n\n\nextract_text_list\n\n extract_text_list (data_path, n_lines=3)\n\n\nsource\n\n\nextract_text\n\n extract_text (file, n_lines=3)\n\n\nsource\n\n\nprocess_line\n\n process_line (txt, n_lines=3)\n\n\nsource\n\n\nprocess_text\n\n process_text (text:str)\n\n\nsource\n\n\ncid_to_char\n\n cid_to_char (cidx:str)\n\n\nsource\n\n\nextract_df_text\n\n extract_df_text (df, col='path', n_lines=3)\n\n\nsource\n\n\ncreate_pdf_df\n\n create_pdf_df (data_path, segs_folder, ems_folder)\n\n\nsource\n\n\ncreate_paths_df\n\n create_paths_df (data_path, suffix='.pdf')"
+  },
+  {
+    "objectID": "pdf/ner.html",
+    "href": "pdf/ner.html",
+    "title": "NER",
+    "section": "",
+    "text": "source\n\nis_valid_tner\n\n is_valid_tner (ner, thresh=3)\n\n\nsource\n\n\nis_valid_jner\n\n is_valid_jner (ner, thresh=3)\n\n\nsource\n\n\nwork_ner\n\n work_ner (txt, tner, jner, ner_dict={'company': '', 'date': ''})\n\n\nsource\n\n\nedu_ner\n\n edu_ner (txt, tner, ner_dict={'institute': '', 'date': ''})\n\n\nsource\n\n\njob_ner\n\n job_ner (txt, tner, jner)\n\n\nsource\n\n\nproc_ner\n\n proc_ner (txt, ner, ner_dict={'institute': '', 'date': ''}, thresh=3)\n\n\nsource\n\n\nload_job_model\n\n load_job_model (model_name='ismail-lucifer011/autotrain-\n                 job_all-903929564', device='cpu')\n\n\nsource\n\n\nload_ner_model\n\n load_ner_model (model_name='tner/deberta-v3-large-ontonotes5',\n                 device='cpu')\n\n\nsource\n\n\ncreate_ner_df\n\n create_ner_df (data_path, segs_folder)"
+  },
+  {
+    "objectID": "utils.html",
+    "href": "utils.html",
+    "title": "Utils",
+    "section": "",
+    "text": "source\n\ngroup_df_on\n\n group_df_on (df, group_on='path', agg_on=['text'])\n\n\nsource\n\n\nrepartition_ds\n\n repartition_ds (ds, num_blocks=2)\n\n\nsource\n\n\nwrite_ds\n\n write_ds (ds, ds_path, append=False, overwrite=False, **kwargs)\n\n\nsource\n\n\nresolve_ds_path\n\n resolve_ds_path (ds_path, append=False, overwrite=False)\n\n\nsource\n\n\nfind_alternate_path\n\n find_alternate_path (path)\n\n\nsource\n\n\nlit_eval\n\n lit_eval (x)\n\n\nsource\n\n\nhandle_input_path\n\n handle_input_path (path, local_path=None, task_id='68c23a378afe4647',\n                    only_new=True)\n\n\nsource\n\n\nget_local_path\n\n get_local_path (remote_path, local_path)\n\n\nsource\n\n\nbucket_dl\n\n bucket_dl (bucket, folder, only_new=True)\n\n\nsource\n\n\nbucket_up\n\n bucket_up (folder, bucket, only_new=True)\n\n\nsource\n\n\nbucket_move\n\n bucket_move (folder, bucket)\n\n\nsource\n\n\nbucket_count\n\n bucket_count (bucket)\n\n\nsource\n\n\ngsutil_src\n\n gsutil_src (folder)\n\n\nsource\n\n\ngsutil_bucket\n\n gsutil_bucket (bucket)\n\n\nsource\n\n\nis_bucket\n\n is_bucket (p)\n\n\nsource\n\n\njson_file\n\n json_file (path, folder)\n\n\nsource\n\n\nupdate_task_progress\n\n update_task_progress (task_id, kv_store, **kwargs)\n\n\nsource\n\n\ninit_task_progress\n\n init_task_progress (task_id, kv_store, total)\n\n\nsource\n\n\nget_task_from_kv_store\n\n get_task_from_kv_store (task_id, kv_store)\n\n\nsource\n\n\njson_file\n\n json_file (path, folder)\n\n\nsource\n\n\ngen_random_string\n\n gen_random_string (length)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "dreamai_ray",
+    "section": "",
+    "text": "pip install dreamai_ray"
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "dreamai_ray",
+    "section": "",
+    "text": "pip install dreamai_ray"
+  },
+  {
+    "objectID": "mapper.html",
+    "href": "mapper.html",
+    "title": "Mapper",
+    "section": "",
+    "text": "source"
+  },
+  {
+    "objectID": "mapper.html#usage-example",
+    "href": "mapper.html#usage-example",
+    "title": "Mapper",
+    "section": "Usage Example",
+    "text": "Usage Example\n\ndf = pd.DataFrame(\n    {\n        \"text\": [\n            [\"I worked at Google\", \"I studied at Harvard\"],\n            [\"I worked at Facebook\", \"I studied at MIT\"],\n        ]\n    }\n)\n\n\ndef ander(df):\n    \"A simple example of a user defined function that joins the text in each row with ' and '.\"\n\n    df[\"joined\"] = \" and \".join(df[\"text\"])\n    return df\n\n\nm = Mapper(udf=ander)\ndf = m(df)\n\n\nℹ DF BATCH SIZE: 2"
+  },
+  {
+    "objectID": "index/core.html",
+    "href": "index/core.html",
+    "title": "Core",
+    "section": "",
+    "text": "source"
+  },
+  {
+    "objectID": "index/core.html#usage-example",
+    "href": "index/core.html#usage-example",
+    "title": "Core",
+    "section": "Usage Example",
+    "text": "Usage Example\n\n# # | eval: false\n\n# data_path = Path(\"\")\n# ems_folder = data_path / \"ems\"\n# index_folder = data_path / \"indexes\"\n# num_ems = 50\n# block_size = 10\n# ems_dim = 768\n# random_ems(num_ems=num_ems, ems_dim=ems_dim, ems_folder=ems_folder)\n\n\nbucket = \"gs://gcsfuse-talentnet-dev\"\n\nems_folder = f\"{bucket}/ems_1_1\"\nindex_folder = f\"{bucket}/indexes_1\"\nems_dim = 768\n\n\nems_df = create_indexes(\n    ems_folder=ems_folder,\n    index_folder=index_folder,\n    index_dim=ems_dim,\n    verbose=True,\n)\n\nems_df[:5]\n\n\nℹ Downloading gs://gcsfuse-talentnet-dev/ems_1_1 to\n/tmp/e324b71dd9114694/ems_1_1.\n\n\nℹ Time taken to download embeddings: 2.06 seconds.\n\nℹ Bucket Indexes: 0\nℹ Embeddings DF created of length: 16\n\nℹ DF BATCH SIZE: 16\n\n\nℹ Uploading /tmp/e324b71dd9114694/indexes_1 to\ngs://gcsfuse-talentnet-dev/indexes_1.\n\n\n\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_1.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_10.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_11.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_12.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_14.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_15.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_13.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_16.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_2.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_3.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_4.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_5.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_6.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_7.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_8.json...\nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_9.json...\n- [16/16 files][267.4 KiB/267.4 KiB] 100% Done                                  \nOperation completed over 16 objects/267.4 KiB.                                   \nCommandException: One or more URLs matched no objects.\nCopying file:///tmp/e324b71dd9114694/indexes_1/1_16.faiss [Content-Type=application/octet-stream]...\nCopying file:///tmp/e324b71dd9114694/indexes_1/1.csv [Content-Type=text/csv]... \n- [2/2 files][ 49.3 KiB/ 49.3 KiB] 100% Done                                    \nOperation completed over 2 objects/49.3 KiB.                                     \n\n\n\n\n\n\n\n\n\nembedding\n\n\n\n\n0\n/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_1.json\n\n\n1\n/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_2.json\n\n\n2\n/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_3.json\n\n\n3\n/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_4.json\n\n\n4\n/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_5.json\n\n\n\n\n\n\n\n\nqems = f\"{ems_folder}/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_10.json\"\nres, qdf = search_indexes(\n    qems,\n    index_folder=index_folder,\n    k=10,\n    verbose=False,\n)\nprint(f'\\n\\nFinal Results:\\n\\tDistances: {res[\"distances\"]}\\n\\tIDs: {res[\"ids\"]}')\nprint(\"\\tMeta Data:\")\nfor m in res[\"meta_data\"]:\n    print(f\"\\t\\t{m}\")\n\n\nℹ Downloading gs://gcsfuse-talentnet-dev/indexes_1 to\n/media/hamza/data2/faiss_data/saved_indexes/indexes_1.\n\n\nℹ Downloading\ngs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_10.json\nto /tmp/0683652a48da4a1c.\n\n[Path('/media/hamza/data2/faiss_data/saved_indexes/indexes_1/1.csv')]\n\n\nFinal Results:\n    Distances: [[0.0, 0.9240111708641052, 1.0372934341430664, 1.101623296737671, 1.1049132347106934, 1.1570426225662231, 1.209057092666626, 1.2113628387451172, 1.2239317893981934, 1.2323083877563477]]\n    IDs: [[9, 11, 8, 13, 14, 1, 3, 7, 12, 4]]\n    Meta Data:\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_10.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_12.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_9.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_14.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_15.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_2.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_4.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_8.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_13.json'}\n        {'embedding': '/tmp/e324b71dd9114694/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_5.json'}\n\n\nCopying gs://gcsfuse-talentnet-dev/indexes_1/1.csv...\nCopying gs://gcsfuse-talentnet-dev/indexes_1/1_16.faiss...                      \n/ [2/2 files][ 49.3 KiB/ 49.3 KiB] 100% Done                                    \nOperation completed over 2 objects/49.3 KiB.                                     \nCopying gs://gcsfuse-talentnet-dev/ems_1_1/resumes-4e2cdbeb-1e20-45ff-bded-a0a510350167_10.json...\n/ [0/1 files][    0.0 B/ 16.7 KiB]   0% Done                                    / [1/1 files][ 16.7 KiB/ 16.7 KiB] 100% Done                                    \nOperation completed over 1 objects/16.7 KiB."
+  },
+  {
+    "objectID": "index/df.html",
+    "href": "index/df.html",
+    "title": "DF Processors",
+    "section": "",
+    "text": "source"
+  },
+  {
+    "objectID": "index/df.html#usage-example",
+    "href": "index/df.html#usage-example",
+    "title": "DF Processors",
+    "section": "Usage Example",
+    "text": "Usage Example\n\nindex_dim = 768\nnp.random.seed(42)\nnum_ems = 5\nems = [np.random.random((1, index_dim))[0].tolist() for i in range(num_ems)]\ndf = pd.DataFrame({\"embedding\": ems})\ndf.index = [i for i in range(10, 10 + num_ems)]  # Create a fake index.\nindex = create_index(index_dim)\n\ndf = df.apply(lambda x: df_to_index(x, index, verbose=True), axis=1)\nfaiss.write_index(index, \"index.faiss\")\n\nℹ Ems Shape: (1, 768)\nℹ Index Size: 1\nℹ Ems Shape: (1, 768)\nℹ Index Size: 2\nℹ Ems Shape: (1, 768)\nℹ Index Size: 3\nℹ Ems Shape: (1, 768)\nℹ Index Size: 4\nℹ Ems Shape: (1, 768)\nℹ Index Size: 5\n\n\n\ndf = pd.DataFrame({\"index\": [\"index.faiss\"], \"embedding\": [ems[0]]})\ndf = df.apply(lambda x: df_index_search(x, k=2, verbose=True), axis=1)\ndf\n\nℹ Index Col: index.faiss\nℹ Index Size: 5\nℹ Ems Shape: (1, 768)\n✔ IDs: [[0 3]], Distances: [[  0.      128.68584]]\n\n\n\n\n\n\n\n\n\nindex\nembedding\nindex_size\ndistances\nids\n\n\n\n\n0\nindex.faiss\n[0.3745401188473625, 0.9507143064099162, 0.7319939418114051, 0.5986584841970366, 0.15601864044243652, 0.15599452033620265, 0.05808361216819946, 0.8661761457749352, 0.6011150117432088, 0.7080725777960455, 0.020584494295802447, 0.9699098521619943, 0.8324426408004217, 0.21233911067827616, 0.18182496720710062, 0.18340450985343382, 0.3042422429595377, 0.5247564316322378, 0.43194501864211576, 0.2912291401980419, 0.6118528947223795, 0.13949386065204183, 0.29214464853521815, 0.3663618432936917, 0.45606998421703593, 0.7851759613930136, 0.19967378215835974, 0.5142344384136116, 0.5924145688620425, 0....\n5\n[[0.0, 128.68584]]\n[[0, 3]]"
+  },
+  {
+    "objectID": "index/utils.html",
+    "href": "index/utils.html",
+    "title": "Utils",
+    "section": "",
+    "text": "source\n\nrandom_ems\n\n random_ems (num_ems=100, ems_dim=768, ems_folder='embeddings')\n\nGenerate random embeddings and save them to a folder\n\nsource\n\n\nindex_heap\n\n index_heap (df, k=1, dist_col='distances', ids_col='ids',\n             size_col='index_size', verbose=False, with_offset=False)\n\n\nsource\n\n\ncreate_index\n\n create_index (dim=768)\n\n\nsource\n\n\nread_ems\n\n read_ems (df, ems_col='embedding', ems_key='embedding', task_folder=None,\n           task_id='ffb87af7396c4f74')"
+  }
+]

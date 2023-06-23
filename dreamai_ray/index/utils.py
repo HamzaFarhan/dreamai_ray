@@ -8,7 +8,6 @@ from ..imports import *
 from ..utils import *
 from ..mapper import *
 
-
 # %% ../../nbs/index/00_utils.ipynb 4
 def read_ems(
     df,
@@ -73,3 +72,4 @@ def random_ems(num_ems=100, ems_dim=768, ems_folder="embeddings"):
     for i, em in enumerate(ems):
         em_path = str(Path(ems_folder) / f"em_{i}.json")
         json.dump({"embedding": em}, open(em_path, "w"))
+

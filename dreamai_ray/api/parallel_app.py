@@ -118,4 +118,5 @@ class DreamAIIndex:
         return res
 
 # %% ../../nbs/api/02_parallel_app.ipynb 5
+# | eval: false
 dai_index = DreamAIIndex.bind()

@@ -11,7 +11,6 @@ from ..index.core import *
 from ..parallel.parallelizer import *
 from .utils import *
 
-
 # %% ../../nbs/api/02_parallel_app.ipynb 4
 app = FastAPI(title="DreamAI Parallel API", version="0.0.2")
 
@@ -117,6 +116,8 @@ class DreamAIIndex:
         msg.good(f"Index Searching Time = {t2-t1:.2f}.", spaced=True)
         return res
 
+
 # %% ../../nbs/api/02_parallel_app.ipynb 5
 # | eval: false
 dai_index = DreamAIIndex.bind()
+

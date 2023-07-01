@@ -9,5 +9,7 @@ website:
         contents: pdf/*
       - section: Index
         contents: index/*
+      - section: Parallel
+        contents: parallel/*
       - section: API
         contents: api/*

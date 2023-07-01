@@ -8,6 +8,7 @@ from ..imports import *
 from ..utils import *
 from ..mapper import *
 
+
 # %% ../../nbs/index/00_utils.ipynb 4
 def read_ems(
     df,
@@ -55,11 +56,9 @@ def index_heap(
             offset = sum(sz[:i])
         else:
             offset = 0
-        if verbose:
-            msg.info(f"Adding Result: {ds[i]}, {ids[i] + offset}")
+        msg.info(f"Adding Result: {ds[i]}, {ids[i] + offset}", show=verbose)
         rh.add_result(ds[i], ids[i] + offset)
-        if verbose:
-            msg.good(f"Added Result: {ds[i]}, {ids[i] + offset}")
+        msg.good(f"Added Result: {ds[i]}, {ids[i] + offset}", show=verbose)
     rh.finalize()
     return {"distances": rh.D.tolist(), "ids": rh.I.tolist()}
 
@@ -72,4 +71,3 @@ def random_ems(num_ems=100, ems_dim=768, ems_folder="embeddings"):
     for i, em in enumerate(ems):
         em_path = str(Path(ems_folder) / f"em_{i}.json")
         json.dump({"embedding": em}, open(em_path, "w"))
-

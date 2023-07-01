@@ -21,12 +21,10 @@ def df_to_index(
     "Add the embeddings in df to the index."
 
     ems = read_ems(df, ems_col=ems_col, ems_key=ems_key)
-    if verbose:
-        msg.info(f"Ems Shape: {ems.shape}")
+    msg.info(f"Ems Shape: {ems.shape}", show=verbose)
     index.add(ems)
     # index.add_with_ids(ems, df.name)
-    if verbose:
-        msg.info(f"Index Size: {index.ntotal}")
+    msg.info(f"Index Size: {index.ntotal}", show=verbose)
     return df
 
 
@@ -40,17 +38,13 @@ def df_index_search(
 ):
     "Find the nearest neighbors of the embeddings in df."
 
-    if verbose:
-        msg.info(f"Index Col: {df[index_col]}")
+    msg.info(f"Index Col: {df[index_col]}", show=verbose)
     index = faiss.read_index(str(df[index_col]))
-    if verbose:
-        msg.info(f"Index Size: {index.ntotal}")
+    msg.info(f"Index Size: {index.ntotal}", show=verbose)
     ems = read_ems(df, ems_col=ems_col, ems_key=ems_key)
-    if verbose:
-        msg.info(f"Ems Shape: {ems.shape}")
+    msg.info(f"Ems Shape: {ems.shape}", show=verbose)
     d, i = index.search(ems, k)
-    if verbose:
-        msg.good(f"IDs: {i}, Distances: {d}")
+    msg.good(f"IDs: {i}, Distances: {d}", show=verbose)
     df["index_size"] = index.ntotal
     df["distances"] = d  # .tolist()[0]
     df["ids"] = i  # .tolist()[0]

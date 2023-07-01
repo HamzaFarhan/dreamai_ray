@@ -2,9 +2,9 @@
 
 # %% auto 0
 __all__ = ['gen_random_string', 'json_file', 'get_task_from_kv_store', 'init_task_progress', 'update_task_progress', 'is_bucket',
-           'gsutil_bucket', 'gsutil_src', 'bucket_count', 'bucket_move', 'bucket_up', 'bucket_dl', 'get_local_path',
-           'handle_input_path', 'lit_eval', 'find_alternate_path', 'resolve_ds_path', 'write_ds', 'repartition_ds',
-           'group_df_on']
+           'gsutil_bucket', 'gsutil_src', 'bucket_del', 'bucket_count', 'bucket_move', 'bucket_up', 'bucket_dl',
+           'get_local_path', 'handle_input_path', 'lit_eval', 'find_alternate_path', 'resolve_ds_path', 'write_ds',
+           'repartition_ds', 'group_df_on']
 
 # %% ../nbs/00_utils.ipynb 2
 from dreamai.core import *
@@ -80,6 +80,12 @@ def gsutil_src(folder):
     folder += "*"
     return folder
 
+
+def bucket_del(bucket):
+    msg.info(f"Deleting {bucket}.", spaced=True)
+    gu = shutil.which("gsutil")
+    bucket = gsutil_bucket(bucket)
+    subprocess.run([gu, "-m", "rm", "-r", bucket])
 
 def bucket_count(bucket):
     gu = shutil.which("gsutil")
